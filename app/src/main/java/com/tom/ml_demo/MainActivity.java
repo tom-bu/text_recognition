@@ -1,6 +1,10 @@
 package com.tom.ml_demo;
 
+import android.*;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +12,11 @@ import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity implements CameraFragment.OnFragmentInteractionListener, TextExtractionFragment.OnFragmentInteractionListener{
     private ViewPager mViewPager;
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
+    private static final int WRITE_EXTERNAL_REQUEST_CODE = 200;
+
+
+
 
 
     @Override
@@ -41,6 +50,18 @@ public class MainActivity extends AppCompatActivity implements CameraFragment.On
 
             }
         });
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.CAMERA},
+                        MY_CAMERA_REQUEST_CODE);
+            }
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        WRITE_EXTERNAL_REQUEST_CODE);
+            }
+        }
 
     }
 

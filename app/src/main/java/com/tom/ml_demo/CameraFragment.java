@@ -3,6 +3,7 @@ package com.tom.ml_demo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -133,6 +134,12 @@ public class CameraFragment extends Fragment {
             mCamera.startPreview();
             //Feed the image into the ML model
             Bitmap bitmap = BitmapFactory.decodeByteArray(data , 0, data.length);
+
+            //forces the picture to be vertical to align with the portrait mode
+            if (bitmap.getWidth() > bitmap.getHeight()){
+                bitmap = fixOrientation(bitmap);
+            }
+
             runTextRecognition(bitmap);
         }
     };
@@ -142,7 +149,7 @@ public class CameraFragment extends Fragment {
         mCamera = getCameraInstance();
 
         // Create our Preview view and set it as the content of our activity.
-        mCameraPreview = new CameraPreview(getActivity(), mCamera);
+        mCameraPreview = new CameraPreview(getActivity(), getActivity(), mCamera);
         mFrameLayout.addView(mCameraPreview);
 
         mCaptureButton.setOnClickListener(new View.OnClickListener() {
@@ -194,5 +201,13 @@ public class CameraFragment extends Fragment {
         ((TextExtractionFragment)getFragmentManager().findFragmentById(R.id.pager)).displayExtraction(mStringBuilder.toString());
         mStringBuilder.setLength(0);
 
+    }
+
+    //rotates the bitmap so that it will return vertical
+    public Bitmap fixOrientation(Bitmap mBitmap) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        mBitmap = Bitmap.createBitmap(mBitmap , 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
+        return mBitmap;
     }
 }
